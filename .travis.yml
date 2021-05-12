@@ -1,0 +1,32 @@
+language: java
+jdk: oraclejdk8
+dist: trusty
+
+# Skipping installation phase
+install: true
+
+branches:
+ only:
+  - master
+  - /^.*RELEASE$/ # enable building of release tags
+
+
+cache:
+ directories:
+  - "$HOME/.m2/repository"
+
+# Set version to tag for release
+before_deploy:
+ - mvn versions:set -DnewVersion=$TRAVIS_TAG
+ - mvn package -Dmaven.test.skip=true
+
+deploy:
+ # Deploy releases to bintray
+ - provider: bintray
+   skip_cleanup: true
+   file: target/bintray.json
+   user: akki2488
+   key: $BINTRAY_API_KEY
+   on:
+    repo: akshay-misra-backend-products/product-management
+    tags: true

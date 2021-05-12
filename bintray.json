@@ -1,0 +1,25 @@
+{
+  "package": {
+    "name": "bss-product-management",
+    "repo": "bss-product-management",
+    "subject": "akki2488",
+    "issue_tracker_url": "@project.url@/issues",
+    "vcs_url": "@project.url@",
+    "licenses": ["Apache-2.0"],
+    "labels": ["product-catalog", "product-management"],
+    "public_download_numbers": true,
+    "public_stats": true
+  },
+  "version": {
+    "name": "@project.version@",
+    "released": "@maven.build.timestamp@",
+    "vcs_tag": "@project.version@"
+  },
+  "files":
+  [
+    {"includePattern": "pom.xml", "uploadPattern": "com/bss/product/catalog/product-catalog-parent/@project.version@/product-catalog-parent-@project.version@.pom"},
+    {"includePattern": "product-catalog-api/pom.xml", "uploadPattern": "com/bss/product/catalog/product-catalog-api/@project.version@/product-catalog-api-@project.version@.pom"},
+    {"includePattern": "product-catalog-api/target/(.*\.jar)", "uploadPattern": "com/bss/product/catalog/product-catalog-api/@project.version@/$1"}
+  ],
+  "publish": true
+}
