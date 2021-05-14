@@ -2,22 +2,13 @@ package com.tt.shopping.rest.controllers;
 
 import com.tt.shopping.api.service.CustomerManagementService;
 import com.tt.shopping.rest.converters.CustomerConverter;
-import com.tt.shopping.rest.json.request.customer.Address;
-import com.tt.shopping.rest.json.request.customer.ContactMedium;
 import com.tt.shopping.rest.json.request.customer.Customer;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
@@ -60,8 +51,10 @@ public class CustomerController {
 
     @ApiOperation(value = "Getting customer’s info using an ID.")
     @GetMapping(value="/customer/{id}")
-    public ResponseEntity<com.tt.shopping.api.model.customer.Customer> getCustomerById(@PathVariable("id") String id) {
-        return ResponseEntity.ok(this.customerManagementService.getCustomerById(id));
+    public ResponseEntity<com.tt.shopping.api.model.customer.Customer> getCustomerById(
+            @PathVariable("id") String id,
+            @RequestParam(required = false) List<String> fields) {
+        return ResponseEntity.ok(this.customerManagementService.getCustomerById(id, fields));
     }
 
     @ApiOperation(value = "Updating customer’s info using the ID.")
@@ -70,13 +63,15 @@ public class CustomerController {
                                                    @Valid @RequestBody Customer request) {
         System.out.println("******** updateCustomer request: " + request);
         final com.tt.shopping.api.model.customer.Customer customer = this.customerConverter.apply(request);
-
-        return ResponseEntity.ok(this.customerManagementService.updateCustomer(id, customer));
+        customer.setId(id);
+        return ResponseEntity.ok(this.customerManagementService.updateCustomer(customer));
     }
 
     @ApiOperation(value = "Listing all customers.")
     @GetMapping("/customer")
-    public ResponseEntity<List<com.tt.shopping.api.model.customer.Customer>> getCustomers() {
-        return ResponseEntity.ok(this.customerManagementService.getCustomers());
+    public ResponseEntity<List<com.tt.shopping.api.model.customer.Customer>> getCustomers(
+             @RequestParam(required = false) List<String> fields
+    ) {
+        return ResponseEntity.ok(this.customerManagementService.getCustomers(fields));
     }
 }

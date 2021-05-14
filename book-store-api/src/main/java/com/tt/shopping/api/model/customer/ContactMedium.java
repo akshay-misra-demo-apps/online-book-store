@@ -1,22 +1,19 @@
 package com.tt.shopping.api.model.customer;
 
 import com.tt.shopping.api.model.Characteristic;
+import com.tt.shopping.api.model.HasHref;
 import com.tt.shopping.api.model.customer.contants.ContactType;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.Objects;
 
 @Data
-@Builder
-//@NoArgsConstructor
-public class ContactMedium {
-
-    @Id
-    private String id;
+@SuperBuilder
+@NoArgsConstructor
+public class ContactMedium extends HasHref {
 
     private boolean preferred;
 

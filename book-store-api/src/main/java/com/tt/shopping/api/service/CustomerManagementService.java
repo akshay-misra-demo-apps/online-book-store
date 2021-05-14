@@ -9,17 +9,15 @@ import java.util.List;
  */
 public interface CustomerManagementService {
 
-    List<Customer> getCustomers();
+    List<Customer> getCustomers(List<String> fields);
 
-    Customer getCustomerById(String id);
+    Customer getCustomerById(String id, List<String> fields);
 
     boolean exists(String customerId);
 
     Customer createCustomer(Customer customer);
 
-    Customer updateCustomer(String id, Customer product);
+    Customer updateCustomer(Customer customer);
 
     void validateCustomer(String customerId);
-
-    void validateCustomer(Customer customer);
 }

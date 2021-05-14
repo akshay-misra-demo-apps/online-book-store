@@ -1,6 +1,5 @@
 package com.tt.shopping.rest.json.request.order;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,5 +11,5 @@ public class OrderItem {
 
     private Integer quantity;
 
-    private String billingAccount;
+    private String billingAccountRef;
 }

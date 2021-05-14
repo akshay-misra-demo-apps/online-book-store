@@ -2,6 +2,7 @@ package com.tt.shopping.impl.service.order;
 
 import com.tt.shopping.api.exceptions.BusinessValidationException;
 import com.tt.shopping.api.exceptions.IncorrectRequestException;
+import com.tt.shopping.api.model.customer.contants.OrderPaymentStatus;
 import com.tt.shopping.api.model.order.OrderItem;
 import com.tt.shopping.api.model.order.constants.ProductOrderStatus;
 import com.tt.shopping.api.model.product.Price;
@@ -9,9 +10,9 @@ import com.tt.shopping.api.model.product.Product;
 import com.tt.shopping.api.model.order.ProductOrder;
 import com.tt.shopping.api.model.order.OrderCancelRequest;
 import com.tt.shopping.api.model.order.OrderPrice;
-import com.tt.shopping.api.model.order.constants.ProductOrderCategory;
 import com.tt.shopping.api.exceptions.ResourceNotFoundException;
 import com.tt.shopping.api.model.product.constants.DistributionChannel;
+import com.tt.shopping.api.service.BillingAccountManagementService;
 import com.tt.shopping.api.service.CustomerManagementService;
 import com.tt.shopping.api.service.OrderManagementService;
 import com.tt.shopping.api.service.ProductManagementService;
@@ -33,19 +34,22 @@ public class OrderManagementServiceImpl implements OrderManagementService {
 
     private final CustomerManagementService customerManagementService;
 
+    private final BillingAccountManagementService billingAccountManagementService;
+
     @Autowired
     public OrderManagementServiceImpl(OrderRepository orderRepository,
                                       ProductManagementService productManagementService,
-                                      CustomerManagementService customerManagementService) {
+                                      CustomerManagementService customerManagementService,
+                                      BillingAccountManagementService billingAccountManagementService) {
         this.orderRepository = orderRepository;
         this.productManagementService = productManagementService;
         this.customerManagementService = customerManagementService;
+        this.billingAccountManagementService = billingAccountManagementService;
     }
 
     @Override
     public ProductOrder createOrder(final ProductOrder order) {
         this.validateOrder(order);
-        order.setCategory(ProductOrderCategory.RESIDENTIAL);
         order.setState(ProductOrderStatus.ACKNOWLEDGED);
         order.setChannel(DistributionChannel.ONLINE);
         order.setOrderDate(LocalDateTime.now());
@@ -63,7 +67,8 @@ public class OrderManagementServiceImpl implements OrderManagementService {
                 .map(orderItem -> orderItem.getItemPrice().getTaxIncludedAmount())
                 .reduce(0.0, Double::sum);
         order.setOrderTotalPrice(totalPriceWithTax);
-        order.getPayment().setAmountPaid(totalPriceWithTax);
+        order.getPayment().setAmount(totalPriceWithTax);
+        order.getPayment().setStatus(OrderPaymentStatus.AWAITING);
 
         return this.orderRepository.save(order);
     }
@@ -99,7 +104,7 @@ public class OrderManagementServiceImpl implements OrderManagementService {
         order.setCancellationDescription(cancelRequest.getCancellationDescription());
         this.orderRepository.save(order);
 
-        return "Product Order with id: " + order.getId() + "has been cancelled successfully";
+        return "Product Order with id: " + order.getId() + " has been cancelled successfully.";
     }
 
     private void validateOrder(final ProductOrder order) {
@@ -109,14 +114,24 @@ public class OrderManagementServiceImpl implements OrderManagementService {
                     "should be present.");
         } else {
             this.validateProduct(order.getOrderItem());
+            order.getOrderItem().stream()
+                    .forEach(orderItem -> {
+                        if (orderItem.getBillingAccountRef() == null) {
+                            throw new IncorrectRequestException("Incorrect request, 'billingAccountRef'" +
+                                    "must be provided for each 'orderItem'.");
+                        } else if (!this.billingAccountManagementService.exists(orderItem.getBillingAccountRef())) {
+                            throw new ResourceNotFoundException("Billing account with id '"
+                                    +  orderItem.getBillingAccountRef() + "' not found.");
+                        }
+                    });
         }
     }
 
     private void validateProduct(List<OrderItem> orderItems) {
         orderItems.stream()
                 .forEach(orderItem -> {
-                    if (orderItem.getSku() == null || orderItem.getQuantity() == null) {
-                        throw new IncorrectRequestException("Incorrect request, 'sku' and 'quantity'" +
+                    if (orderItem.getSku() == null || orderItem.getQuantity() == null || orderItem.getQuantity() < 1) {
+                        throw new IncorrectRequestException("Incorrect request, 'sku' and minimum one 'quantity'" +
                                 "must be provided for each 'orderItem'.");
                     } else {
                         Product product = this.productManagementService.getProductBySku(orderItem.getSku());

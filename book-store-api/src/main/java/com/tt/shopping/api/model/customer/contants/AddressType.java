@@ -1,8 +1,7 @@
 package com.tt.shopping.api.model.customer.contants;
 
-public enum ContactType {
+public enum AddressType {
 
-    PHONE,
-    EMAIL,
-    FAX
+    HOME,
+    OFFICE,
 }

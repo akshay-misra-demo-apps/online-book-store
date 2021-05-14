@@ -3,6 +3,7 @@ package com.tt.shopping.rest.converters;
 import com.tt.shopping.api.model.customer.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -15,34 +16,38 @@ public class CustomerConverter implements Function<com.tt.shopping.rest.json.req
 
     private final ContactMediumConverter contactMediumConverter;
 
-    private final PaymentMethodConverter paymentMethodConverter;
+    private final BillingAccountConverter billingAccountConverter;
 
     @Autowired
     public CustomerConverter(AddressConverter addressConverter,
                              ContactMediumConverter contactMediumConverter,
-                             PaymentMethodConverter paymentMethodConverter) {
+                             BillingAccountConverter billingAccountConverter) {
         this.addressConverter = addressConverter;
         this.contactMediumConverter = contactMediumConverter;
-        this.paymentMethodConverter = paymentMethodConverter;
+        this.billingAccountConverter = billingAccountConverter;
     }
 
     @Override
     public Customer apply(com.tt.shopping.rest.json.request.customer.Customer source) {
         return Customer.builder()
                 .id(source.getId())
-                .name(source.getName())
+                .firstName(source.getFirstName())
+                .lastName(source.getLastName())
+                .primaryEmail(source.getPrimaryEmail())
+                .secondaryEmail(source.getSecondaryEmail())
+                .customerCategory(source.getCustomerCategory())
                 .characteristic(source.getCharacteristic())
-                .address(source.getAddress()
+                .address(CollectionUtils.isEmpty(source.getAddress()) ? null : source.getAddress()
                         .stream()
                         .map(address -> this.addressConverter.apply(address))
                         .collect(Collectors.toList()))
-                .contactMedium(source.getContactMedium()
+                .contactMedium(CollectionUtils.isEmpty(source.getContactMedium()) ? null : source.getContactMedium()
                         .stream()
                         .map(contactMedium -> this.contactMediumConverter.apply(contactMedium))
                         .collect(Collectors.toList()))
-                .paymentMethod(source.getPaymentMethod()
+                .billingAccount(CollectionUtils.isEmpty(source.getBillingAccount()) ? null :source.getBillingAccount()
                         .stream()
-                        .map(paymentMethod -> this.paymentMethodConverter.apply(paymentMethod))
+                        .map(billingAccount -> this.billingAccountConverter.apply(billingAccount))
                         .collect(Collectors.toList()))
                 .build();
     }

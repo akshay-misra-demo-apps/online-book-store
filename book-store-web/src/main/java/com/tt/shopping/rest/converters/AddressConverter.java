@@ -19,6 +19,8 @@ public class AddressConverter implements Function<com.tt.shopping.rest.json.requ
                 .stateOrProvince(source.getStateOrProvince())
                 .postCode(source.getPostCode())
                 .country(source.getCountry())
+                .phoneNumber(source.getPhoneNumber())
+                .addressType(source.getAddressType())
                 .build();
     }
 }

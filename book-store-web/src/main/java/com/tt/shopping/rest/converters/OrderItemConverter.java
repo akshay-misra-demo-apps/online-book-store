@@ -13,7 +13,7 @@ public class OrderItemConverter implements Function<com.tt.shopping.rest.json.re
     public OrderItem apply(com.tt.shopping.rest.json.request.order.OrderItem source) {
         return OrderItem.builder()
                 .sku(source.getSku())
-                .billingAccount(source.getBillingAccount())
+                .billingAccountRef(source.getBillingAccountRef())
                 .quantity(source.getQuantity())
                 .build();
     }

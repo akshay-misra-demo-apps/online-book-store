@@ -11,9 +11,9 @@ import java.util.List;
 @Builder
 public class PaymentMethod {
 
-    private String name;
-
     private PaymentMethodType paymentMethodType;
+
+    private boolean defaultMethod;
 
     private List<Characteristic> characteristic;
 }

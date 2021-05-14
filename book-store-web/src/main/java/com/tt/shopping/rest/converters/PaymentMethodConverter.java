@@ -12,8 +12,9 @@ public class PaymentMethodConverter implements Function<com.tt.shopping.rest.jso
     @Override
     public PaymentMethod apply(com.tt.shopping.rest.json.request.customer.PaymentMethod source) {
         return PaymentMethod.builder()
-                .name(source.getName())
+                .name("Payment Method - " + source.getPaymentMethodType())
                 .paymentMethodType(source.getPaymentMethodType())
+                .defaultMethod(source.isDefaultMethod())
                 .characteristic(source.getCharacteristic())
                 .build();
     }

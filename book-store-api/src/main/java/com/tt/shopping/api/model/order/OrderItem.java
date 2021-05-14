@@ -16,5 +16,5 @@ public class OrderItem extends HasHrefName {
 
     private OrderPrice itemPrice;
 
-    private String billingAccount;
+    private String billingAccountRef;
 }

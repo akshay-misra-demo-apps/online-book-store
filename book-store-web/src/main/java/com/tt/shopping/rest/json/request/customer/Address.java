@@ -1,5 +1,6 @@
 package com.tt.shopping.rest.json.request.customer;
 
+import com.tt.shopping.api.model.customer.contants.AddressType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +23,10 @@ public class Address {
     private String street2;
 
     private String postCode;
+
+    private String phoneNumber;
+
+    private AddressType addressType;
 
     @Override
     public boolean equals(Object o) {

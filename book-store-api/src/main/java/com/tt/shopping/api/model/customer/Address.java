@@ -1,19 +1,21 @@
 package com.tt.shopping.api.model.customer;
 
-import lombok.Builder;
+import com.tt.shopping.api.model.HasHref;
+import com.tt.shopping.api.model.customer.contants.AddressType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
 
 @Data
-@Builder
-//@NoArgsConstructor
-public class Address {
+@SuperBuilder
+@NoArgsConstructor
+@Document(collection="addresses")
+public class Address extends HasHref {
 
-    @Id
-    private String id;
+    private String customerId;
 
     private String country;
 
@@ -26,6 +28,10 @@ public class Address {
     private String street2;
 
     private String postCode;
+
+    private String phoneNumber;
+
+    private AddressType addressType;
 
     @Override
     public boolean equals(Object o) {

@@ -2,6 +2,7 @@ package com.tt.shopping.api.model.customer;
 
 import com.tt.shopping.api.model.Characteristic;
 import com.tt.shopping.api.model.HasHrefName;
+import com.tt.shopping.api.model.customer.contants.OrderPaymentStatus;
 import com.tt.shopping.api.model.customer.contants.PaymentMethodType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,9 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderPayment extends HasHrefName {
 
-  private Double amountPaid;
+  private OrderPaymentStatus status;
+
+  private Double amount;
 
   private PaymentMethodType type;
 

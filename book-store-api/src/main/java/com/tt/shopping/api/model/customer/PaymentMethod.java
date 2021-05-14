@@ -17,13 +17,15 @@ public class PaymentMethod extends HasHrefName {
 
     private PaymentMethodType paymentMethodType;
 
+    private boolean defaultMethod;
+
     private List<Characteristic> characteristic;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ContactMedium)) return false;
-        ContactMedium that = (ContactMedium) o;
+        if (!(o instanceof PaymentMethod)) return false;
+        PaymentMethod that = (PaymentMethod) o;
         return getId().equals(that.getId());
     }
 
