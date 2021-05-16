@@ -1,13 +1,13 @@
 package com.tt.shopping.rest.json.request.order;
 
 import com.tt.shopping.rest.json.request.customer.PaymentMethod;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
-@NoArgsConstructor
+@Builder
 public class ProductOrder {
 
     private String externalId;

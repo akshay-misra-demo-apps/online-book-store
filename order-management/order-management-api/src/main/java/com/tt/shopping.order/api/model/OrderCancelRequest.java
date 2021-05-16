@@ -1,11 +1,11 @@
 package com.tt.shopping.order.api.model;
 
 import com.tt.shopping.order.api.model.constants.CancellationReason;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
+@Builder
 public class OrderCancelRequest {
 
     private String orderId;

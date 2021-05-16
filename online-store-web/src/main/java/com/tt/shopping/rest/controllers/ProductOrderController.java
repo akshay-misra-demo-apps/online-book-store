@@ -1,16 +1,24 @@
 package com.tt.shopping.rest.controllers;
 
 import com.tt.shopping.order.api.model.OrderCancelRequest;
-import com.tt.shopping.api.service.OrderManagementService;
+import com.tt.shopping.order.api.service.OrderManagementService;
+import com.tt.shopping.rest.constants.RestUris;
 import com.tt.shopping.rest.converters.ProductOrderConverter;
 import com.tt.shopping.rest.json.request.order.ProductOrder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 
@@ -24,7 +32,7 @@ import java.util.List;
  * iii. List all orders using customer ID
  */
 @RestController
-@RequestMapping("/tmf-api/productOrderingManagement/v1")
+@RequestMapping(RestUris.PRODUCT_ORDER_BASE_URI)
 @Api(value = "Order Controller", description = "Product Order Management REST Endpoints.")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class ProductOrderController {
@@ -45,7 +53,10 @@ public class ProductOrderController {
             @Valid @RequestBody ProductOrder request) {
         final com.tt.shopping.order.api.model.ProductOrder order =
                 this.productOrderConverter.apply(request);
-        return ResponseEntity.ok(this.orderManagementService.createOrder(order));
+        final com.tt.shopping.order.api.model.ProductOrder persisted = this.orderManagementService.createOrder(order);
+        return ResponseEntity
+                .created(URI.create(RestUris.PRODUCT_ORDER_URI + persisted.getId()))
+                .body(persisted);
     }
 
     @ApiOperation(value = "Creating an order.")

@@ -1,10 +1,10 @@
 package com.tt.shopping.rest.json.request.order;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
+@Builder
 public class OrderItem {
 
     private String sku;

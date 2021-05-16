@@ -1,6 +1,7 @@
 package com.tt.shopping.rest.controllers;
 
 import com.tt.shopping.customer.api.service.CustomerManagementService;
+import com.tt.shopping.rest.constants.RestUris;
 import com.tt.shopping.rest.converters.CustomerConverter;
 import com.tt.shopping.rest.json.request.customer.Customer;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -25,7 +27,7 @@ import java.util.List;
  * iv. Listing all customers.
  */
 @RestController
-@RequestMapping("/tmf-api/customerManagement/v1")
+@RequestMapping(RestUris.CUSTOMER_BASE_URI)
 @Api(value = "Customer Controller", description = "Customer Management REST Endpoints.")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class CustomerController {
@@ -46,7 +48,11 @@ public class CustomerController {
     public ResponseEntity<com.tt.shopping.customer.api.model.Customer> createCustomer(
             @Valid @RequestBody Customer request) {
         final com.tt.shopping.customer.api.model.Customer customer = this.customerConverter.apply(request);
-        return ResponseEntity.ok(this.customerManagementService.createCustomer(customer));
+        final com.tt.shopping.customer.api.model.Customer persisted =
+                this.customerManagementService.createCustomer(customer);
+        return ResponseEntity
+                .created(URI.create(RestUris.CUSTOMER_URI + "/" + persisted.getId()))
+                .body(persisted);
     }
 
     @ApiOperation(value = "Getting customer’s info using an ID.")

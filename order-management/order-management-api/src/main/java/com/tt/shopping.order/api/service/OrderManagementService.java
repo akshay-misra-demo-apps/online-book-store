@@ -1,4 +1,4 @@
-package com.tt.shopping.api.service;
+package com.tt.shopping.order.api.service;
 
 import com.tt.shopping.order.api.model.OrderCancelRequest;
 import com.tt.shopping.order.api.model.ProductOrder;
@@ -12,4 +12,8 @@ public interface OrderManagementService {
     List<ProductOrder> getOrdersByCustomerId(String customerId);
 
     String cancelOrder(OrderCancelRequest cancelRequest);
+
+    void deleteOrdersForCustomer(String customerId);
+
+    boolean deleteProductOrder(String id);
 }

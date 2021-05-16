@@ -7,5 +7,5 @@ public enum PaymentMethodType {
     CASH,
     CHECK,
     PAYPAL,
-    DIGITAL_WALLET
+    UPI
 }

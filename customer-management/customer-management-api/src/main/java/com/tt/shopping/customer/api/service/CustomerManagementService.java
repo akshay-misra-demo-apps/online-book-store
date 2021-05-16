@@ -9,6 +9,8 @@ public interface CustomerManagementService {
 
     List<Customer> getCustomers(List<String> fields);
 
+    List<Customer> getCustomerByPrimaryEmail(String primaryEmail);
+
     Customer getCustomerById(String id, List<String> fields);
 
     boolean exists(String customerId);
@@ -18,4 +20,6 @@ public interface CustomerManagementService {
     Customer updateCustomer(Customer customer);
 
     void validateCustomer(String customerId);
+
+    boolean deleteCustomer(String id);
 }

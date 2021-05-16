@@ -1,4 +1,4 @@
-package com.tt.shopping.order.impl.service.order;
+package com.tt.shopping.order.impl.service;
 
 import com.tt.shopping.common.api.exceptions.BusinessValidationException;
 import com.tt.shopping.common.api.exceptions.IncorrectRequestException;
@@ -11,7 +11,7 @@ import com.tt.shopping.order.api.model.ProductOrder;
 import com.tt.shopping.order.api.model.constants.ProductOrderStatus;
 import com.tt.shopping.order.api.model.OrderCancelRequest;
 import com.tt.shopping.order.api.model.OrderPrice;
-import com.tt.shopping.api.service.OrderManagementService;
+import com.tt.shopping.order.api.service.OrderManagementService;
 import com.tt.shopping.order.impl.repositories.OrderRepository;
 import com.tt.shopping.product.api.model.Price;
 import com.tt.shopping.product.api.model.Product;
@@ -107,6 +107,26 @@ public class OrderManagementServiceImpl implements OrderManagementService {
         return "Product Order with id: " + order.getId() + " has been cancelled successfully.";
     }
 
+    @Override
+    public void deleteOrdersForCustomer(final String customerId) {
+        final List<ProductOrder> orders = this.getOrdersByCustomerId(customerId);
+        orders.stream()
+                .forEach(productOrder -> {
+                    this.deleteProductOrder(productOrder.getId());
+                });
+    }
+
+    @Override
+    public boolean deleteProductOrder(final String id) {
+        boolean deleted = false;
+        if(this.orderRepository.existsById(id)) {
+            this.orderRepository.deleteById(id);
+            deleted = true;
+        }
+
+        return deleted;
+    }
+
     private void validateOrder(final ProductOrder order) {
         this.customerManagementService.validateCustomer(order.getCustomerId());
         if (CollectionUtils.isEmpty(order.getOrderItem())) {
@@ -126,6 +146,8 @@ public class OrderManagementServiceImpl implements OrderManagementService {
                     });
         }
     }
+
+
 
     private void validateProduct(List<OrderItem> orderItems) {
         orderItems.stream()

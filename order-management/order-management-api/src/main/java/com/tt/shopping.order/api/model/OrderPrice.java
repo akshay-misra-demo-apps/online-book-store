@@ -2,11 +2,13 @@ package com.tt.shopping.order.api.model;
 
 import com.tt.shopping.product.api.model.constants.PriceType;
 import com.tt.shopping.product.api.model.constants.RecurringChargePeriod;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder
+@SuperBuilder
+@NoArgsConstructor
 public class OrderPrice {
 
     private String name;

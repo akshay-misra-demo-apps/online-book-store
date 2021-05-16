@@ -6,6 +6,7 @@ import com.tt.shopping.customer.api.model.contants.CustomerCategory;
 import com.tt.shopping.customer.api.model.contants.CustomerStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @Document(collection="customers")
