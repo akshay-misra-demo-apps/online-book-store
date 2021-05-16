@@ -26,87 +26,112 @@ Supported Use Cases:
 
  Steps to launch the application:
  
- Pre-requisite: This is a maven based Java-8 Spring Boot application, so 'Maven' and 'Java 8' should be installed and environment variables should be set before.  
+Prerequisite: This is a maven based Java-8 Spring Boot application, so 'Maven' and 'Java 8' should be installed and environment variables should be set before.
+Clone git repo to local machine.
+Option 1 to start application:
  
- 1. Clone git repo to local machine.
-
- Option 1 to start application:
+a. Open application source code in any development IDE, example in 'Intellij Idea Ultimate' version. Setup Java 8 JDK in the IDE. 
  
-   a. Open application source code in any development IDE, example in 'Intelij Idea Utimate' version. Setup Java 8 JDK in the IDE.
-   b. Run Maven commands in 'Intelij Idea' from parent maven module named as  "online-store-parent". First run 'clean' and then 'install' Lifecycle commands.
-   c. This will start building the application, download required maven dependencies and build a runnable jar with name "online-store-0.0.1.jar" in location "/online-store/target".
-   d. After this either we can run the application from 'Intelij Idea' or any other IDE. Open bootstrap class "com.tt.shopping.Application" present under "online-store" maven module and run "com.tt.shopping.Application" from IDE.
+b. Run Maven commands in 'Intellij Idea' from the parent maven module named as "online-store-parent". First run 'clean' and then 'install' Lifecycle commands. 
+ 
+c. This will start building the application, download required maven dependencies and build a runnable jar with name "online-store-0.0.1.jar" in location "/online-store/target". 
+ 
+d. After this either we can run the application from 'Intellij Idea' or any other IDE. Open bootstrap class "com.tt.shopping.Application'' present under "online-store" maven module and run "com.tt.shopping.Application" from IDE.
+ 
+ 
+Option 2 to start application:
+ 
+a. If 'Maven' and 'Java 8' is installed and environment variables are set then after cloning the git repository run following command from the root. mvn clean install 
+ 
+b. This will start building the application, download required maven dependencies and build a runnable jar with name "online-store-0.0.1.jar" in location "/online-store/target".
+ 
+c. While building the project, Rest APIs Tests will run testing all the exposed apis. d. To run the jar created in step b. go to the command line tool and run the following command to start the application.
+ 
+java -jar ./online-store/target/online-store-0.0.1.jar
+ 
+This will start the application in port 9090 and the application can be accessed using  
+ 
+http://127.0.0.1:9090/  
+ 
+How to know which Rest APIs are currently supported by the application, what is the URI and what input is expected by each rest api? 
+ 
+--> The application uses 'Swagger' for rest API documentation which will help to find answers to above questions.
+ 
+ To make it more user friendly the application has a dependency to 'Swagger UI' as well.
+ 
+ Swagger ui can be accessed through following url: 
+ 
+ http://127.0.0.1:9090/swagger-ui.html 
+ 
+ This shows all the available rest endpoints currently exposed by the application. Rest APIs can be found under each section as follow:
+ 
+ 1. customer-controller
+ 
+    Customer Management REST Endpoints.
+ 
+ 
+  GET
+ 
+  /tmf-api/customerManagement/v1/customer
+  Listing all customers.
+ 
+  POST
+ 
+  /tmf-api/customerManagement/v1/customer
+  Creating a customer.
+ 
+  GET
+ 
+  /tmf-api/customerManagement/v1/customer/{id}
+  Getting customer’s info using an ID.
+ 
+  PATCH
+ 
+  /tmf-api/customerManagement/v1/customer/{id}
+  Updating customer’s info using the ID.
   
-   
- Option 2 to start application:
- 
-   a. If 'Maven' and 'Java 8' is installed and environment variables are set then after cloning the git repository run following command from the root.
-       mvn clean install
-   b. This will start building the application, download required maven dependencies and build a runnable jar with name "online-store-0.0.1.jar" in location "/online-store/target".  
-   c. While building project, Rest APIs Tests will run testing all the exposed apis.
-   d. To run the jar created in step b. go to command line tool and run following command to start the application.
-      java -jar ./online-store/target/online-store-0.0.1.jar
-      
-      This will start the application in port 9090 and the application can be accessed using http://127.0.0.1:9090/ 
-      
- 
- How to know which Rest APIs are currently supported by the application, what is the URI and what input is expected by each rest api?
- --> The application uses 'Swagger' for rest API documentation which will help to find answers to above questions.
- 
-     To make it more user friendly the appliation has a dependency to 'Swagger UI' as well.
-     
-     Swagger ui can be accessed through following url: http://127.0.0.1:9090/swagger-ui.html 
-     
-     This shows all the available rest end points currently exposed by the application. Rest APIs can be found under each section as follow:
-     
-     1. customer-controller
-
-      Customer Management REST Endpoints.
-
-
-      GET
-      /tmf-api/customerManagement/v1/customer
-      Listing all customers.
-
-      POST
-      /tmf-api/customerManagement/v1/customer
-      Creating a customer.
-
-      GET
-      /tmf-api/customerManagement/v1/customer/{id}
-      Getting customer’s info using an ID.
-
-      PATCH
-      /tmf-api/customerManagement/v1/customer/{id}
-      Updating customer’s info using the ID.
-      
-      
-     2. product-offering-controller
-      GET
-      /tmf-api/productOfferingManagement/v1/productOffering
-      List all available products.
-      
-     3. product-order-controller
-      Product Order Management REST Endpoints.
-
-
-      POST
-      /tmf-api/productOrderingManagement/v1/productOrder
-      Creating an order.
-      GET
-      /tmf-api/productOrderingManagement/v1/productOrder/{customerId}
-      List all orders using customer ID.
-      POST
-      /tmf-api/productOrderingManagement/v1/productOrder/cancel
-      Creating an order.
-
-   ====> To try any rest api, expand that api and click on "Try it out"
-         Under "request" section there are 2 tabs/buttons. 'Edit Value': where we can add a request body(for POST/PATCH operation) and 'Model' where we can find the request model details required by the rest api. Under Model tab we can check each JSON field and its data type by expanding it. If clearly shows whether a field is of 'string', 'boolean' or Enum(we can find available options expected by the api) 
-         
-   ====> After filling all required details click on "Execute" button to trigger the request and the response can be found below in "Responses" section.
-   
-   
   
+ 
+ 
+ 
+2. product-offering-controller
+ 
+    Product Offering Management REST Endpoints.
+ 
+  GET
+ 
+  /tmf-api/productOfferingManagement/v1/productOffering
+  List all available products.
+  
+ 3. product-order-controller
+ 
+     Product Order Management REST Endpoints.
+ 
+ 
+  POST
+ 
+  /tmf-api/productOrderingManagement/v1/productOrder
+  Creating an order.
+ 
+  GET
+  /tmf-api/productOrderingManagement/v1/productOrder/{customerId}
+  List all orders using customer ID.
+ 
+  POST
+  /tmf-api/productOrderingManagement/v1/productOrder/cancel
+  Creating an order.
+ 
+====> To try any rest api, expand that api and click on "Try it out" under the "request" section there are 2 tabs/buttons. 
+ 
+'Edit Value': where we can add a request body(for POST/PATCH operation) and 
+'Model' where we can find the request model details required by the rest api. 
+ 
+Under the Model tab we can check each JSON field and its data type by expanding it.
+ 
+ If clearly shows whether a field is of 'string', 'boolean' or Enum(we can find available options expected by the api)
+====> After filling all required details click on the "Execute" button to trigger the request and the response can be found below in the "Responses" section.
+
+
                      
 ====================  Rest API Specifications  =====================
 
