@@ -23,7 +23,6 @@ public class ProductManagementServiceImpl implements ProductManagementService {
 
     @Override
     public List<Product> getProducts() {
-        System.out.println("ProductManagementServiceImpl getProducts.");
         final Sort sortByCreatedAtDesc = Sort.by(Sort.Direction.DESC, "createdAt");
         return this.productRepository.findAll(sortByCreatedAtDesc);
     }

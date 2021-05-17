@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
@@ -51,7 +50,6 @@ public class RestControllerTest extends AbstractTest {
     @Test
     @Order(1)
     public void test1_createCustomer() throws Exception {
-        System.out.println("**************** test1_createCustomer started ...");
         final Customer customer = new Customer();
         customer.setFirstName("T-First");
         customer.setLastName("T-Last");
@@ -71,13 +69,11 @@ public class RestControllerTest extends AbstractTest {
 
         final int status = mvcResult.getResponse().getStatus();
         Assert.assertEquals(201, status);
-        System.out.println("**************** test1_createCustomer end ...");
     }
 
     @Test
     @Order(2)
     public void test2_getCustomers() throws Exception {
-        System.out.println("**************** test2_getCustomers started ...");
         final MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(RestUris.CUSTOMER_URI)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andReturn();
@@ -87,13 +83,11 @@ public class RestControllerTest extends AbstractTest {
         final String content = mvcResult.getResponse().getContentAsString();
         Customer[] customers = super.mapFromJson(content, Customer[].class);
         Assert.assertTrue(customers.length > 0);
-        System.out.println("**************** test2_getCustomers end ...");
     }
 
     @Test
     @Order(3)
     public void test3_updateCustomer() throws Exception {
-        System.out.println("**************** test3_updateCustomer started ...");
         final Customer customerToUpdate = this.getTestCustomer(Collections.EMPTY_LIST);
         customerToUpdate.setFirstName("T-First-Updated");
         final List<Address> addresses = new ArrayList<>(1);
@@ -123,7 +117,6 @@ public class RestControllerTest extends AbstractTest {
         billingAccounts.add(billingAccount);
         customerToUpdate.setBillingAccount(billingAccounts);
 
-        System.out.println("**************** test3_updateCustomer customerToUpdate: " + customerToUpdate);
         final String uri = RestUris.CUSTOMER_URI +  "/" + customerToUpdate.getId();
         final String requestBody = super.mapToJson(customerToUpdate);
         final MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
@@ -131,15 +124,12 @@ public class RestControllerTest extends AbstractTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(requestBody))
                 .andReturn();
-        System.out.println("**************** test3_updateCustomer customerToUpdate: " +
-                mvcResult.getResponse().getStatus());
         Assert.assertEquals(200, mvcResult.getResponse().getStatus());
         final Customer updatedCustomer = this.getCustomerById(customerToUpdate.getId(),
                 Arrays.asList("address", "billingAccount"));
         Assert.assertEquals("T-First-Updated", updatedCustomer.getFirstName());
         Assert.assertTrue(!updatedCustomer.getAddress().isEmpty());
         Assert.assertTrue(!updatedCustomer.getBillingAccount().isEmpty());
-        System.out.println("**************** test3_updateCustomer end ...");
     }
 
     public Customer getTestCustomer(final List<String> fields) throws Exception {
@@ -178,13 +168,14 @@ public class RestControllerTest extends AbstractTest {
     @Test
     @Order(4)
     public void test4_createProductOrder() throws Exception {
-        System.out.println("**************** test4_createProductOrder started ...");
         final Customer customer = this.getTestCustomer(Arrays.asList("address", "billingAccount"));
         final BillingAccount billingAccount = customer.getBillingAccount().stream().findFirst().get();
         final com.tt.shopping.rest.json.request.customer.PaymentMethod paymentMethod =
                 com.tt.shopping.rest.json.request.customer.PaymentMethod.builder()
                         .paymentMethodType(PaymentMethodType.PAYPAL)
-                        .characteristic(Arrays.asList(new Characteristic("accountNumber", "5709890721")))
+                        .characteristic(Arrays.asList(new Characteristic(
+                                "accountNumber",
+                                "5709890721")))
                         .build();
         final List<OrderItem> orderItems = new ArrayList<>(1);
         final OrderItem orderItem = OrderItem.builder()
@@ -213,35 +204,28 @@ public class RestControllerTest extends AbstractTest {
                 .andReturn();
 
         final int status = mvcResult.getResponse().getStatus();
-        System.out.println("************ test4_createProductOrder: status: " + status);
         Assert.assertEquals(201, status);
 
         final String content = mvcResult.getResponse().getContentAsString();
         com.tt.shopping.order.api.model.ProductOrder persisted = super.mapFromJson(content,
                 com.tt.shopping.order.api.model.ProductOrder.class);
-        System.out.println("************ test4_createProductOrder: persisted order: " + persisted);
         Assert.assertTrue(persisted.getId() != null);
-        System.out.println("**************** test4_createProductOrder end ...");
     }
 
     @Test
     @Order(5)
     public void test5_getProductOrderListByCustomer() throws Exception {
-        System.out.println("**************** test5_getProductOrderListByCustomer started ...");
         final com.tt.shopping.order.api.model.ProductOrder[] orders = this.getTestProductOrders();
         Assert.assertTrue(orders.length > 0);
-        System.out.println("**************** test5_getProductOrderListByCustomer end ...");
     }
 
     @Test
     @Order(6)
     public void test6_cancelProductOrder() throws Exception {
-        System.out.println("**************** test6_cancelProductOrder started ...");
         final com.tt.shopping.order.api.model.ProductOrder[] orders = this.getTestProductOrders();
         for (final com.tt.shopping.order.api.model.ProductOrder order : orders) {
             this.cancelProductOrder(order);
         }
-        System.out.println("**************** test6_cancelProductOrder end ...");
         this.applicationInitializationProcessor.init();
     }
 

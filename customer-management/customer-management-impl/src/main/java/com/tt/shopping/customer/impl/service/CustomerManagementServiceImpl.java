@@ -11,6 +11,7 @@ import com.tt.shopping.customer.impl.processor.UpdateCustomerProcessor;
 import com.tt.shopping.customer.impl.repositories.AddressRepository;
 import com.tt.shopping.customer.impl.repositories.BillingAccountRepository;
 import com.tt.shopping.customer.impl.repositories.CustomerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class CustomerManagementServiceImpl implements CustomerManagementService {
 
@@ -46,7 +48,7 @@ public class CustomerManagementServiceImpl implements CustomerManagementService 
 
     @Override
     public List<Customer> getCustomers(final List<String> fields) {
-        System.out.println("CustomerManagementServiceImpl getCustomers.");
+        log.debug("getCustomers started with fields: ", fields);
         List<Customer> customers = this.customerRepository.findAll();
         if (fields != null) {
             if (fields.contains("address")) {
@@ -54,6 +56,7 @@ public class CustomerManagementServiceImpl implements CustomerManagementService 
                         .forEach(customer -> {
                             customer.setAddress(this.addressRepository.findAllByCustomerId(customer.getId()));
                         });
+                log.info("getCustomers, address loaded into customers.");
             }
 
             if (fields.contains("billingAccount")) {
@@ -62,6 +65,7 @@ public class CustomerManagementServiceImpl implements CustomerManagementService 
                             customer.setBillingAccount(this.billingAccountRepository
                                     .findAllByCustomerId(customer.getId()));
                         });
+                log.info("getCustomers, billingAccounts loaded into customers.");
             }
         }
 
@@ -75,6 +79,7 @@ public class CustomerManagementServiceImpl implements CustomerManagementService 
 
     @Override
     public Customer getCustomerById(final String id, final List<String> fields) {
+        log.debug("getCustomerById started with id: and fields: ", id, fields);
         final Customer customer = this.customerRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Customer with id '" +  id + "' not found."));
 
@@ -88,6 +93,7 @@ public class CustomerManagementServiceImpl implements CustomerManagementService 
             }
         }
 
+        log.debug("getCustomerById exit with customer: ", customer);
         return customer;
     }
 
@@ -111,7 +117,7 @@ public class CustomerManagementServiceImpl implements CustomerManagementService 
     @Override
     @Transactional
     public boolean deleteCustomer(final String id) {
-        System.out.println("... deleteCustomer, id: ");
+        log.debug("deleteCustomer started with id: ", id);
         if (this.exists(id)) {
             final List<Address> addresses = addressRepository.findAllByCustomerId(id);
             if (!CollectionUtils.isEmpty(addresses)) {
@@ -128,6 +134,8 @@ public class CustomerManagementServiceImpl implements CustomerManagementService 
                         });
             }
             this.customerRepository.deleteById(id);
+
+            log.info("getCustomers, addresses, billing accounts and customer deleted successfully.");
             return true;
         }
 

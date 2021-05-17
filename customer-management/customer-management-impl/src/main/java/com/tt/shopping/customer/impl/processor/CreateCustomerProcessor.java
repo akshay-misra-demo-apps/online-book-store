@@ -10,6 +10,7 @@ import com.tt.shopping.customer.api.model.contants.CustomerStatus;
 import com.tt.shopping.customer.impl.repositories.AddressRepository;
 import com.tt.shopping.customer.impl.repositories.BillingAccountRepository;
 import com.tt.shopping.customer.impl.repositories.CustomerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Component
 public class CreateCustomerProcessor<T extends Customer> extends CreateActionProcessor<T> {
 
@@ -46,6 +48,7 @@ public class CreateCustomerProcessor<T extends Customer> extends CreateActionPro
 
     @Override
     public Customer doAction(final Customer customer) {
+        log.debug("doAction started with customer: ", customer);
         customer.setAccountNumber(this.sequenceGenerator.generate());
         customer.setName(customer.getFirstName() + " " + customer.getLastName());
         if (!CollectionUtils.isEmpty(customer.getContactMedium())) {
@@ -84,7 +87,7 @@ public class CreateCustomerProcessor<T extends Customer> extends CreateActionPro
         customer.setAddress(null);
         customer.setBillingAccount(null);
         final Customer customerDb = this.customerRepository.save(customer);
-        System.out.println("*** createCustomer persisted, customerDb: " + customerDb);
+        log.info("doAction, customer created successfully in database.");
 
         if (addressToPersist != null) {
             addressToPersist.stream()
@@ -92,6 +95,7 @@ public class CreateCustomerProcessor<T extends Customer> extends CreateActionPro
                         address.setCustomerId(customerDb.getId());
                     });
             this.addressRepository.saveAll(addressToPersist);
+            log.info("doAction, addresses created successfully in database.");
         }
 
         if (billingAccountsToPersist != null) {
@@ -100,8 +104,10 @@ public class CreateCustomerProcessor<T extends Customer> extends CreateActionPro
                         billingAccount.setCustomerId(customerDb.getId());
                     });
             this.billingAccountRepository.saveAll(billingAccountsToPersist);
+            log.info("doAction, billing accounts created successfully in database.");
         }
 
+        log.debug("doAction exit with persisted customer id: ", customerDb.getId());
         return customerDb;
     }
 

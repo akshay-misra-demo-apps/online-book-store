@@ -17,6 +17,7 @@ import com.tt.shopping.product.api.model.Price;
 import com.tt.shopping.product.api.model.Product;
 import com.tt.shopping.product.api.model.constants.DistributionChannel;
 import com.tt.shopping.product.api.service.ProductManagementService;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 public class OrderManagementServiceImpl implements OrderManagementService {
 
@@ -49,6 +51,7 @@ public class OrderManagementServiceImpl implements OrderManagementService {
 
     @Override
     public ProductOrder createOrder(final ProductOrder order) {
+        log.debug("createOrder, started with order: ", order);
         this.validateOrder(order);
         order.setState(ProductOrderStatus.ACKNOWLEDGED);
         order.setChannel(DistributionChannel.ONLINE);
@@ -69,6 +72,7 @@ public class OrderManagementServiceImpl implements OrderManagementService {
         order.setOrderTotalPrice(totalPriceWithTax);
         order.getPayment().setAmount(totalPriceWithTax);
         order.getPayment().setStatus(OrderPaymentStatus.AWAITING);
+        log.info("createOrder, persisting order with AWAITING status to database.");
 
         return this.orderRepository.save(order);
     }
@@ -93,6 +97,7 @@ public class OrderManagementServiceImpl implements OrderManagementService {
 
     @Override
     public String cancelOrder(final OrderCancelRequest cancelRequest) {
+        log.debug("cancelOrder, started with cancelRequest: ", cancelRequest);
         if (cancelRequest.getOrderId() == null || cancelRequest.getCancellationReason() == null) {
             throw new IncorrectRequestException("Incorrect request, 'orderId' and 'cancellationReason' " +
                     "must be present.");
@@ -104,6 +109,7 @@ public class OrderManagementServiceImpl implements OrderManagementService {
         order.setCancellationDescription(cancelRequest.getCancellationDescription());
         this.orderRepository.save(order);
 
+        log.info("cancelOrder, order is cancelled successfully.");
         return "Product Order with id: " + order.getId() + " has been cancelled successfully.";
     }
 

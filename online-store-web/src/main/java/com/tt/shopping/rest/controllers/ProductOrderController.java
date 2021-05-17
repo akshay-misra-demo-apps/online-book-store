@@ -7,6 +7,7 @@ import com.tt.shopping.rest.converters.ProductOrderConverter;
 import com.tt.shopping.rest.json.request.order.ProductOrder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,7 @@ import java.util.List;
 
 
 /**
- * Rest APIs for customer management.
+ * Rest APIs for product order management.
  *
  * Acceptance Criteria:
  * The customer is already logged in and trying to place an order. Create RESTful APIs for:
@@ -31,6 +32,7 @@ import java.util.List;
  * ii. Canceling/Deleting an order
  * iii. List all orders using customer ID
  */
+@Slf4j
 @RestController
 @RequestMapping(RestUris.PRODUCT_ORDER_BASE_URI)
 @Api(value = "Order Controller", description = "Product Order Management REST Endpoints.")
@@ -51,6 +53,7 @@ public class ProductOrderController {
     @PostMapping("/productOrder")
     public ResponseEntity<com.tt.shopping.order.api.model.ProductOrder> createOrder(
             @Valid @RequestBody ProductOrder request) {
+        log.trace("createOrder started with request: ", request);
         final com.tt.shopping.order.api.model.ProductOrder order =
                 this.productOrderConverter.apply(request);
         final com.tt.shopping.order.api.model.ProductOrder persisted = this.orderManagementService.createOrder(order);
@@ -61,14 +64,16 @@ public class ProductOrderController {
 
     @ApiOperation(value = "Creating an order.")
     @PostMapping("/productOrder/cancel")
-    public ResponseEntity<String> cancelCustomer(@Valid @RequestBody OrderCancelRequest cancelRequest) {
-        return ResponseEntity.ok(this.orderManagementService.cancelOrder(cancelRequest));
+    public ResponseEntity<String> cancelOrder(@Valid @RequestBody OrderCancelRequest request) {
+        log.trace("cancelOrder started with request: ", request);
+        return ResponseEntity.ok(this.orderManagementService.cancelOrder(request));
     }
 
     @ApiOperation(value = "List all orders using customer ID.")
     @GetMapping(value="/productOrder/{customerId}")
-    public ResponseEntity<List<com.tt.shopping.order.api.model.ProductOrder>> getCustomerById(
+    public ResponseEntity<List<com.tt.shopping.order.api.model.ProductOrder>> getOrdersByCustomerId(
             @PathVariable("customerId") String customerId) {
+        log.trace("getOrdersByCustomerId started with customerId: ", customerId);
         return ResponseEntity.ok(this.orderManagementService.getOrdersByCustomerId(customerId));
     }
 

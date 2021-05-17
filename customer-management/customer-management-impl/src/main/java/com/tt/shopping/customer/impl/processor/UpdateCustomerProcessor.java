@@ -12,6 +12,7 @@ import com.tt.shopping.customer.api.model.PaymentMethod;
 import com.tt.shopping.customer.impl.repositories.AddressRepository;
 import com.tt.shopping.customer.impl.repositories.BillingAccountRepository;
 import com.tt.shopping.customer.impl.repositories.CustomerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class UpdateCustomerProcessor <T extends Customer> extends UpdateActionProcessor<T> {
 
@@ -49,6 +51,7 @@ public class UpdateCustomerProcessor <T extends Customer> extends UpdateActionPr
 
     @Override
     public Customer doAction(final Customer customer) {
+        log.debug("doAction started with merged customer: ", customer);
         customer.setName(customer.getFirstName() + " " + customer.getLastName());
         if (!CollectionUtils.isEmpty(customer.getContactMedium())) {
             customer.getContactMedium()
@@ -81,6 +84,7 @@ public class UpdateCustomerProcessor <T extends Customer> extends UpdateActionPr
                     });
             customer.setAddress(null);
             this.addressRepository.saveAll(addressToPersist);
+            log.info("doAction, addresses saved successfully in database.");
         }
 
         final List<BillingAccount> billingAccountsToPersist = customer.getBillingAccount();
@@ -91,6 +95,7 @@ public class UpdateCustomerProcessor <T extends Customer> extends UpdateActionPr
                     });
             customer.setBillingAccount(null);
             this.billingAccountRepository.saveAll(billingAccountsToPersist);
+            log.info("doAction, billing accounts saved successfully in database.");
         }
 
         return this.customerRepository.save(customer);
@@ -140,8 +145,6 @@ public class UpdateCustomerProcessor <T extends Customer> extends UpdateActionPr
             final List<ContactMedium> existingContacts = customer.getContactMedium().stream()
                     .filter(contactMedium -> contactMedium.getId() != null)
                     .collect(Collectors.toList());
-            System.out.println("********* existingContacts: " + existingContacts);
-
             customerDB.getContactMedium()
                     .stream()
                     .forEach(contactMediumDb -> {
@@ -156,13 +159,18 @@ public class UpdateCustomerProcessor <T extends Customer> extends UpdateActionPr
                             }
                         }
                     });
+
+            final List<ContactMedium> newContactMedium = customer.getContactMedium().stream()
+                    .filter(contactMedium -> contactMedium.getId() == null)
+                    .collect(Collectors.toList());
+            log.debug("merge, newContactMedium going to be added to customer: ", newContactMedium);
+            customerDB.getContactMedium().addAll(newContactMedium);
         }
 
         if (!CollectionUtils.isEmpty(customer.getAddress())) {
             final List<Address> existingAddresses = customer.getAddress().stream()
                     .filter(address -> address.getId() != null)
                     .collect(Collectors.toList());
-            System.out.println("********* existingAddresses: " + existingAddresses);
 
             customerDB.setAddress(this.addressRepository.findAllByCustomerId(customer.getId()));
             customerDB.getAddress().stream()
@@ -199,7 +207,7 @@ public class UpdateCustomerProcessor <T extends Customer> extends UpdateActionPr
             final List<Address> newAddresses = customer.getAddress().stream()
                     .filter(address -> address.getId() == null)
                     .collect(Collectors.toList());
-            System.out.println("********* newAddresses: " + newAddresses);
+            log.debug("merge, newAddresses going to be added to customer: ", newAddresses);
             customerDB.getAddress().addAll(newAddresses);
         }
 
@@ -234,6 +242,7 @@ public class UpdateCustomerProcessor <T extends Customer> extends UpdateActionPr
                     .stream()
                     .filter(billingAccount -> billingAccount.getId() == null)
                     .collect(Collectors.toList());
+            log.debug("merge, newBillingAccounts going to be added to customer: ", newBillingAccounts);
             customerDB.getBillingAccount().addAll(newBillingAccounts);
         }
 

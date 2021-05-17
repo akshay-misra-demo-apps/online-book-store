@@ -38,18 +38,12 @@ public class BillingAccountPostValidator<T extends Customer> implements PostVali
     @Override
     public void validate(Customer customer) {
         this.billingAccountValidator.validate(customer);
-        System.out.println("******* ###### @@@@@ BillingAccountPostValidator, BillingAccount: "
-                + customer.getBillingAccount());
         if (!CollectionUtils.isEmpty(customer.getBillingAccount())) {
             customer.getBillingAccount()
                     .stream()
                     .filter(billingAccount -> billingAccount.getId() != null)
                     .forEach(billingAccount -> {
-                        System.out.println("******* ###### @@@@@ BillingAccountPostValidator, BillingAccountId: "
-                                + billingAccount.getId());
                         final boolean exist = this.billingAccountRepository.existsById(billingAccount.getId());
-                        System.out.println("******* ###### @@@@@ BillingAccountPostValidator, exist: "
-                                + exist);
                         if (!exist) {
                             throw new ResourceNotFoundException("'billingAccount' with id '" +
                                     billingAccount.getId() + "' not found.");

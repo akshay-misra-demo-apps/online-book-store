@@ -10,12 +10,6 @@
 	<name>order-management-impl</name>
 	<description>order management implementation module</description>
 
-	<!--<parent>
-		<groupId>com.tt.shopping</groupId>
-		<artifactId>order-management</artifactId>
-		<version>0.0.1</version>
-	</parent>-->
-
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -49,6 +43,14 @@
 			<artifactId>order-management-api</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.20</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
